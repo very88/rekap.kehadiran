@@ -124,7 +124,7 @@
             display: block;
         }
         .password-wrapper input {
-            padding-right: 45px; /* Memberi ruang agar teks tidak tertutup ikon */
+            padding-right: 45px;
         }
         .toggle-password {
             position: absolute;
@@ -175,6 +175,20 @@
         }
         .btn-hapus:hover { background-color: rgba(255, 59, 48, 0.2); }
         .btn-hapus:active { background-color: var(--ios-red); color: white; }
+
+        /* Logout Button */
+        .btn-logout {
+            width: auto;
+            padding: 8px 16px;
+            margin: 0;
+            background-color: rgba(255, 59, 48, 0.1);
+            color: var(--ios-red);
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .btn-logout:hover { background-color: rgba(255, 59, 48, 0.2); }
+        .btn-logout:active { background-color: var(--ios-red); color: white; }
         
         /* iOS Segmented Control (Menu Tabs) */
         .tab-menu { 
@@ -232,7 +246,7 @@
         .flex-row .form-group { flex: 1; }
 
         /* Section Visibility Logic */
-        #loginSection, #formSection, #rekapSection, #historySection { display: none; }
+        #loginSection, #formSection, #rekapSection, #historySection, #userBar { display: none; }
         #loginSection { display: block; } 
         
         /* Print/PDF Container */
@@ -268,12 +282,11 @@
 
 <!-- HALAMAN LOGIN -->
 <div class="container" id="loginSection">
-    <h2>Login Sistem Guru</h2>
+    <h2>Silahkan Login Sistem</h2>
     <form id="formLogin">
         <div class="form-group"><label>Username:</label><input type="text" id="username" required placeholder="Masukkan username"></div>
         <div class="form-group">
             <label>Password:</label>
-            <!-- Wrapper Password Baru -->
             <div class="password-wrapper">
                 <input type="password" id="password" required placeholder="Masukkan password">
                 <span class="toggle-password" onclick="togglePassword()">
@@ -293,6 +306,12 @@
         <button type="submit">Login</button>
         <p id="loginLoading" style="display:none; text-align:center; color: var(--ios-gray); font-size: 14px; margin-top: 15px;">Mengecek data...</p>
     </form>
+</div>
+
+<!-- USER INFO & LOGOUT (Muncul Setelah Login) -->
+<div id="userBar" style="width: 100%; max-width: 650px; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 0 5px; box-sizing: border-box; animation: slideUpFade 0.5s ease forwards;">
+    <div style="font-weight: 600; color: var(--ios-text); font-size: 16px;">Halo, <span id="namaUserBar"></span> 👋</div>
+    <button onclick="logout()" class="btn-logout">Keluar</button>
 </div>
 
 <!-- MENU TABS -->
@@ -398,7 +417,7 @@
     let namaUserAktif = "";
     let chartInstance = null;
 
-    // FUNGSI TOGGLE PASSWORD BARU
+    // FUNGSI TOGGLE PASSWORD
     function togglePassword() {
         const passwordInput = document.getElementById('password');
         const eyeIcon = document.getElementById('eyeIcon');
@@ -415,6 +434,35 @@
         }
     }
 
+    // FUNGSI LOGOUT
+    function logout() {
+        if(confirm("Apakah Anda yakin ingin keluar?")) {
+            namaUserAktif = ""; // Kosongkan sesi nama
+            
+            // Sembunyikan antarmuka utama
+            document.getElementById("userBar").style.display = "none";
+            document.getElementById("tabMenu").style.display = "none";
+            document.getElementById("formSection").style.display = "none";
+            document.getElementById("historySection").style.display = "none";
+            document.getElementById("rekapSection").style.display = "none";
+            
+            // Reset formulir login & form kehadiran
+            document.getElementById("formLogin").reset();
+            document.getElementById("formKehadiran").reset();
+            
+            // Kembalikan ikon mata password ke default jika sedang aktif
+            document.getElementById('password').type = 'password';
+            document.getElementById('eyeIcon').style.display = 'block';
+            document.getElementById('eyeOffIcon').style.display = 'none';
+
+            // Tampilkan kembali halaman login dengan animasi
+            document.getElementById("loginSection").style.display = "block";
+            document.getElementById("loginSection").style.animation = 'none';
+            void document.getElementById("loginSection").offsetWidth; // Trigger reflow
+            document.getElementById("loginSection").style.animation = 'slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+        }
+    }
+
     // LABEL DINAMIS
     document.getElementById("jenis").addEventListener("change", function() {
         const jenis = this.value;
@@ -426,12 +474,10 @@
 
     // SISTEM PINDAH TAB
     function bukaTab(tab) {
-        // Hapus animasi sebelumnya agar bisa trigger ulang
         document.getElementById('formSection').style.animation = 'none';
         document.getElementById('historySection').style.animation = 'none';
         document.getElementById('rekapSection').style.animation = 'none';
         
-        // Reset display
         document.getElementById('formSection').style.display = 'none';
         document.getElementById('historySection').style.display = 'none';
         document.getElementById('rekapSection').style.display = 'none';
@@ -440,7 +486,6 @@
         document.getElementById('btnTabHistory').className = '';
         document.getElementById('btnTabRekap').className = '';
 
-        // Force reflow untuk trigger ulang animasi CSS
         void document.getElementById('formSection').offsetWidth;
 
         if (tab === 'form') { 
@@ -472,8 +517,14 @@
             document.getElementById("loginLoading").style.display = "none";
             if (data.status === "success") {
                 namaUserAktif = data.nama;
+                
+                // Transisi tampilan dari Login ke Dashboard
                 document.getElementById("loginSection").style.display = "none";
+                
+                document.getElementById("userBar").style.display = "flex";
+                document.getElementById("namaUserBar").innerText = namaUserAktif;
                 document.getElementById("tabMenu").style.display = "flex";
+                
                 bukaTab('form');
                 document.getElementById("namaGuru").value = namaUserAktif;
                 document.getElementById("namaRekap").innerText = namaUserAktif;
@@ -490,7 +541,7 @@
         });
     });
 
-    // --- FITUR BARU: AMBIL & TAMPILKAN RIWAYAT ---
+    // AMBIL & TAMPILKAN RIWAYAT
     function loadHistory() {
         const tbody = document.getElementById("tabelRiwayat");
         tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: #8e8e93;">Memuat riwayat...</td></tr>';
@@ -521,7 +572,7 @@
         });
     }
 
-    // --- FITUR BARU: PROSES HAPUS JURNAL ---
+    // PROSES HAPUS JURNAL
     function hapusJurnal(timestamp) {
         if(confirm("Apakah Anda yakin ingin membatalkan/menghapus jurnal ini? Data yang terhapus tidak dapat dikembalikan.")) {
             fetch(GAS_URL, {
@@ -538,7 +589,7 @@
         }
     }
 
-    // GENERATE REKAP (TETAP SAMA SEPERTI SEBELUMNYA)
+    // GENERATE REKAP
     function generateRekap() {
         const beban = parseFloat(document.getElementById("inputBebanKerja").value);
         const tglAwal = document.getElementById("tglAwal").value;
@@ -583,7 +634,6 @@
         const ctx = document.getElementById('kehadiranChart').getContext('2d');
         if (chartInstance) chartInstance.destroy();
         
-        // Warna chart disesuaikan dengan palet iOS
         chartInstance = new Chart(ctx, { 
             type: 'bar', 
             data: { 
