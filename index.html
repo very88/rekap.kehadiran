@@ -7,315 +7,59 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        /* === iOS LIGHT THEME & ANIMATIONS === */
-        :root {
-            --ios-bg: #f2f2f7;
-            --ios-blue: #007aff;
-            --ios-green: #34c759;
-            --ios-red: #ff3b30;
-            --ios-text: #1c1c1e;
-            --ios-gray: #8e8e93;
-            --ios-light-gray: #e5e5ea;
-            --card-bg: rgba(255, 255, 255, 0.75);
-        }
-
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background-color: var(--ios-bg); 
-            color: var(--ios-text);
-            margin: 0; 
-            padding: 20px; 
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        /* Ambient Animated Background */
-        .ambient-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: -1;
-            overflow: hidden;
-            background: var(--ios-bg);
-        }
-        .blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.6;
-            animation: float 15s infinite alternate ease-in-out;
-        }
-        .blob-1 {
-            width: 400px; height: 400px;
-            background: #aadaff;
-            top: -100px; left: -100px;
-        }
-        .blob-2 {
-            width: 350px; height: 350px;
-            background: #fbc2eb;
-            bottom: -50px; right: -50px;
-            animation-delay: -5s;
-        }
-
-        @keyframes float {
-            0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(50px, 30px) scale(1.1); }
-            100% { transform: translate(-30px, 50px) scale(0.9); }
-        }
-
-        /* Glassmorphism Container */
-        .container { 
-            width: 100%;
-            max-width: 650px; 
-            background: var(--card-bg); 
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 30px; 
-            margin: 10px auto 20px; 
-            border-radius: 24px; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.05), inset 0 0 0 1px rgba(255,255,255,0.5); 
-            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            box-sizing: border-box;
-        }
-
-        @keyframes slideUpFade {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        h2, h3 { 
-            text-align: center; 
-            color: var(--ios-text); 
-            font-weight: 700; 
-            letter-spacing: -0.5px;
-            margin-top: 0;
-        }
-
-        .form-group { margin-bottom: 18px; }
-        label { display: block; font-weight: 500; margin-bottom: 8px; color: #444; font-size: 14px; }
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+        .container { max-width: 700px; background: white; padding: 20px; margin: auto; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2, h3 { text-align: center; color: #333; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #555; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        input[readonly] { background-color: #e9ecef; }
+        button { width: 100%; padding: 12px; background-color: #0056b3; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; margin-top: 10px; font-weight: bold; }
+        button:hover { background-color: #004494; }
         
-        /* Inputs & Selects */
-        input, select, textarea { 
-            width: 100%; 
-            padding: 14px 16px; 
-            font-size: 16px;
-            font-family: inherit;
-            background-color: rgba(255, 255, 255, 0.8); 
-            border: 1px solid rgba(0,0,0,0.08); 
-            border-radius: 14px; 
-            box-sizing: border-box; 
-            transition: all 0.3s ease;
-            color: var(--ios-text);
-        }
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--ios-blue);
-            background-color: #fff;
-            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15);
-        }
-        input[readonly] { background-color: rgba(0,0,0,0.03); color: var(--ios-gray); }
-
-        /* Fitur Toggle Password */
-        .password-wrapper {
-            position: relative;
-            display: block;
-        }
-        .password-wrapper input {
-            padding-right: 45px;
-        }
-        .toggle-password {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: var(--ios-gray);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: color 0.2s;
-        }
-        .toggle-password:hover {
-            color: var(--ios-text);
-        }
-
-        /* Buttons */
-        button { 
-            width: 100%; 
-            padding: 15px; 
-            background-color: var(--ios-blue); 
-            color: white; 
-            border: none; 
-            border-radius: 14px; 
-            font-size: 16px; 
-            cursor: pointer; 
-            margin-top: 10px; 
-            font-weight: 600; 
-            letter-spacing: 0.3px;
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), filter 0.2s; 
-        }
-        button:hover { filter: brightness(0.95); }
-        button:active { transform: scale(0.97); }
+        .btn-success { background-color: #28a745; }
+        .btn-success:hover { background-color: #218838; }
+        .btn-danger { background-color: #dc3545; }
+        .btn-danger:hover { background-color: #c82333; }
+        .btn-hapus { background-color: #dc3545; color: white; padding: 5px 10px; border: none; border-radius: 3px; font-size: 12px; cursor: pointer; width: auto; margin:0; }
         
-        .btn-success { background-color: var(--ios-green); }
-        .btn-danger { background-color: var(--ios-red); }
-        
-        .btn-hapus { 
-            background-color: rgba(255, 59, 48, 0.1); 
-            color: var(--ios-red); 
-            padding: 6px 12px; 
-            border-radius: 8px; 
-            font-size: 13px; 
-            width: auto; 
-            margin:0; 
-            font-weight: 600;
-        }
-        .btn-hapus:hover { background-color: rgba(255, 59, 48, 0.2); }
-        .btn-hapus:active { background-color: var(--ios-red); color: white; }
+        .tab-menu { display: flex; gap: 5px; margin-bottom: 20px; display: none; }
+        .tab-menu button { background-color: #6c757d; font-size: 14px; padding: 10px; }
+        .tab-menu button.active { background-color: #0056b3; }
 
-        /* Logout Button */
-        .btn-logout {
-            width: auto;
-            padding: 8px 16px;
-            margin: 0;
-            background-color: rgba(255, 59, 48, 0.1);
-            color: var(--ios-red);
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-        .btn-logout:hover { background-color: rgba(255, 59, 48, 0.2); }
-        .btn-logout:active { background-color: var(--ios-red); color: white; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px;}
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #333; color: white; }
+        .predikat-box { padding: 10px; color: white; font-weight: bold; text-align: center; border-radius: 5px; margin: 15px 0; }
         
-        /* iOS Segmented Control (Menu Tabs) */
-        .tab-menu { 
-            display: flex; 
-            background-color: rgba(118, 118, 128, 0.12); 
-            padding: 4px;
-            border-radius: 12px;
-            display: none; 
-            margin-bottom: 25px;
-            width: 100%;
-            max-width: 650px;
-        }
-        .tab-menu button { 
-            background-color: transparent; 
-            color: var(--ios-text);
-            font-size: 14px; 
-            padding: 10px; 
-            margin: 0;
-            border-radius: 10px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        .tab-menu button.active { 
-            background-color: #ffffff; 
-            box-shadow: 0 3px 8px rgba(0,0,0,0.12), 0 3px 1px rgba(0,0,0,0.04);
-            font-weight: 600;
-        }
-
-        /* Tables */
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; background: white; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
-        th, td { border-bottom: 1px solid var(--ios-light-gray); padding: 14px 12px; text-align: left; }
-        th { background-color: #f9f9fb; color: var(--ios-gray); font-weight: 600; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px;}
-        tr:last-child td { border-bottom: none; }
-
-        /* Custom Elements */
-        .predikat-box { 
-            padding: 14px; 
-            color: white; 
-            font-weight: 700; 
-            text-align: center; 
-            border-radius: 14px; 
-            margin: 20px 0; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            animation: slideUpFade 0.5s ease-out;
-        }
-        
-        .filter-box { 
-            background-color: rgba(0,0,0,0.02); 
-            padding: 20px; 
-            border-radius: 18px; 
-            margin-bottom: 25px; 
-            border: 1px solid rgba(0,0,0,0.05); 
-        }
-        .flex-row { display: flex; gap: 15px; }
+        .filter-box { background-color: #e9ecef; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #ced4da; }
+        .flex-row { display: flex; gap: 10px; }
         .flex-row .form-group { flex: 1; }
 
-        /* Section Visibility Logic */
-        #loginSection, #formSection, #rekapSection, #historySection, #userBar { display: none; }
+        #loginSection, #formSection, #rekapSection, #historySection { display: none; }
         #loginSection { display: block; } 
+        #laporanCetak { padding: 20px; border: 1px solid #eee; background: white; display: none; }
         
-        /* Print/PDF Container */
-        #laporanCetak { 
-            padding: 30px; 
-            border: 1px solid transparent; 
-            background: white; 
-            display: none; 
-            border-radius: 20px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-            margin-top: 20px;
-        }
-
-        /* Footer */
-        .footer {
-            margin-top: auto;
-            padding-top: 30px;
-            padding-bottom: 10px;
-            text-align: center;
-            font-size: 13px;
-            color: var(--ios-gray);
-            font-weight: 500;
-        }
+        /* Style untuk tabel detail print */
+        .tabel-detail th { background-color: #6c757d; font-size: 13px; }
+        .tabel-detail td { font-size: 13px; }
     </style>
 </head>
 <body>
 
-<!-- AMBIENT BACKGROUND -->
-<div class="ambient-bg">
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-</div>
-
 <!-- HALAMAN LOGIN -->
 <div class="container" id="loginSection">
-    <h2>Silahkan Login Sistem</h2>
+    <h2>Login Sistem Guru</h2>
     <form id="formLogin">
-        <div class="form-group"><label>Username:</label><input type="text" id="username" required placeholder="Masukkan username"></div>
-        <div class="form-group">
-            <label>Password:</label>
-            <div class="password-wrapper">
-                <input type="password" id="password" required placeholder="Masukkan password">
-                <span class="toggle-password" onclick="togglePassword()">
-                    <!-- SVG Mata Terbuka -->
-                    <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                    <!-- SVG Mata Tertutup -->
-                    <svg id="eyeOffIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
-                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                        <line x1="1" y1="1" x2="23" y2="23"></line>
-                    </svg>
-                </span>
-            </div>
-        </div>
+        <div class="form-group"><label>Username:</label><input type="text" id="username" required></div>
+        <div class="form-group"><label>Password:</label><input type="password" id="password" required></div>
         <button type="submit">Login</button>
-        <p id="loginLoading" style="display:none; text-align:center; color: var(--ios-gray); font-size: 14px; margin-top: 15px;">Mengecek data...</p>
+        <p id="loginLoading" style="display:none; text-align:center;">Mengecek data...</p>
     </form>
 </div>
 
-<!-- USER INFO & LOGOUT (Muncul Setelah Login) -->
-<div id="userBar" style="width: 100%; max-width: 650px; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 0 5px; box-sizing: border-box; animation: slideUpFade 0.5s ease forwards;">
-    <div style="font-weight: 600; color: var(--ios-text); font-size: 16px;">Halo, <span id="namaUserBar"></span> 👋</div>
-    <button onclick="logout()" class="btn-logout">Keluar</button>
-</div>
-
 <!-- MENU TABS -->
-<div class="tab-menu" id="tabMenu">
+<div class="container tab-menu" id="tabMenu">
     <button id="btnTabForm" class="active" onclick="bukaTab('form')">Input Jurnal</button>
     <button id="btnTabHistory" onclick="bukaTab('history')">Riwayat & Hapus</button>
     <button id="btnTabRekap" onclick="bukaTab('rekap')">Rekap Kinerja</button>
@@ -323,7 +67,7 @@
 
 <!-- TAB 1: FORMULIR INPUT -->
 <div class="container" id="formSection">
-    <h2>Laporan Kehadiran</h2>
+    <h2>Laporan Kehadiran & Jurnal</h2>
     <form id="formKehadiran">
         <div class="form-group"><label>Nama Guru:</label><input type="text" id="namaGuru" readonly required></div>
         <div class="form-group"><label>Tanggal:</label><input type="date" id="tanggal" required></div>
@@ -337,32 +81,26 @@
                 <option value="Jam Tambahan">Jam Tambahan</option>
             </select>
         </div>
-        <div class="form-group"><label id="labelJam" style="color: var(--ios-red);">Jumlah Jam:</label>
-            <input type="number" id="jam" min="1" required placeholder="0">
+        <div class="form-group"><label id="labelJam" style="color: #d9534f;">Jumlah Jam:</label>
+            <input type="number" id="jam" min="1" required>
         </div>
-        <div class="form-group"><label>Kelas:</label><input type="text" id="kelas" required placeholder="Contoh: XII IPA 1"></div>
-        <div class="form-group"><label>Jurnal / Keterangan:</label><textarea id="keterangan" rows="3" required placeholder="Tulis rincian kegiatan..."></textarea></div>
+        <div class="form-group"><label>Kelas:</label><input type="text" id="kelas" required></div>
+        <div class="form-group"><label>Jurnal / Keterangan:</label><textarea id="keterangan" rows="3" required></textarea></div>
         <button type="submit" class="btn-success">Kirim Laporan</button>
     </form>
 </div>
 
 <!-- TAB 2: RIWAYAT & HAPUS -->
 <div class="container" id="historySection">
-    <h2>Riwayat Jurnal</h2>
-    <p style="font-size: 14px; color: var(--ios-gray); text-align: center; margin-bottom: 20px;">Jika Anda melakukan kesalahan input, silakan hapus data di bawah ini dan input ulang di menu "Input Jurnal".</p>
-    <div style="overflow-x:auto; padding-bottom: 10px;">
+    <h2>Riwayat Jurnal Anda</h2>
+    <p>Jika ada kesalahan input, Anda bisa menghapus data di sini.</p>
+    <div style="overflow-x:auto;">
         <table>
             <thead>
-                <tr>
-                    <th>Tanggal Input</th>
-                    <th>Jenis</th>
-                    <th>Jam</th>
-                    <th>Keterangan</th>
-                    <th>Aksi</th>
-                </tr>
+                <tr><th>Tanggal Input</th><th>Jenis</th><th>Jam</th><th>Keterangan</th><th>Aksi</th></tr>
             </thead>
             <tbody id="tabelRiwayat">
-                <tr><td colspan="5" style="text-align:center; color: var(--ios-gray);">Memuat riwayat...</td></tr>
+                <tr><td colspan="5" style="text-align:center;">Memuat riwayat...</td></tr>
             </tbody>
         </table>
     </div>
@@ -371,7 +109,7 @@
 <!-- TAB 3: REKAP KINERJA -->
 <div class="container" id="rekapSection">
     <div class="filter-box">
-        <h3 style="margin-top: 0;">Filter Laporan</h3>
+        <h3 style="margin-top: 0;">Filter Laporan & Beban Kerja</h3>
         <div class="form-group">
             <label>Beban Kerja Seharusnya (Target Jam):</label>
             <input type="number" id="inputBebanKerja" value="330" required>
@@ -383,32 +121,45 @@
         <button class="btn-success" onclick="generateRekap()">🔄 Generate Rekap</button>
     </div>
 
+    <!-- AREA CETAK PDF -->
     <div id="laporanCetak">
-        <button class="btn-danger" style="margin-bottom: 25px; border-radius: 12px;" onclick="downloadPDF()" data-html2canvas-ignore>📥 Download Laporan (PDF)</button>
+        <button class="btn-danger" style="margin-bottom: 20px;" onclick="downloadPDF()" data-html2canvas-ignore>📥 Download Laporan (PDF)</button>
         
-        <h2 style="text-align: center; border-bottom: 2px solid var(--ios-light-gray); padding-bottom: 15px; margin-bottom: 20px;">LAPORAN KINERJA GURU</h2>
+        <h2 style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px;">LAPORAN KINERJA GURU</h2>
         <p><strong>Nama:</strong> <span id="namaRekap"></span></p>
-        <p><strong>Periode:</strong> <span id="periodeRekap"></span></p>
+        <p><strong>Periode Evaluasi:</strong> <span id="periodeRekap"></span></p>
         
         <div id="predikatBox" class="predikat-box">Memuat...</div>
 
         <table>
             <tr><th>Komponen Evaluasi</th><th>Jumlah Jam</th></tr>
-            <tr><td>Target Beban Kerja Awal</td><td id="tabelBeban" style="font-weight: 500;"></td></tr>
-            <tr><td style="color: var(--ios-red);">Total Jam Ditinggalkan (Sakit/Izin/Alfa)</td><td id="tabelAbsen" style="color: var(--ios-red); font-weight: 500;"></td></tr>
-            <tr><td style="color: var(--ios-blue);">Total Tugas Tambahan</td><td id="tabelTambahan" style="color: var(--ios-blue); font-weight: 500;"></td></tr>
-            <tr><td style="background-color: var(--ios-bg);"><strong>TOTAL JAM AKTIF MENGAJAR</strong></td><td style="background-color: var(--ios-bg);"><strong id="jamAktifTxt" style="font-size:18px;"></strong></td></tr>
+            <tr><td>Target Beban Kerja Awal</td><td id="tabelBeban"></td></tr>
+            <tr><td style="color: #dc3545;">- Total Jam Ditinggalkan (Sakit/Izin/Alfa)</td><td id="tabelAbsen" style="color: #dc3545;"></td></tr>
+            <tr><td style="color: #007bff;">+ Total Tugas Tambahan</td><td id="tabelTambahan" style="color: #007bff;"></td></tr>
+            <tr><td style="background:#e9ecef;"><strong>TOTAL JAM AKTIF MENGAJAR</strong></td><td style="background:#e9ecef;"><strong id="jamAktifTxt" style="font-size:18px;"></strong></td></tr>
         </table>
 
-        <div style="margin-top:30px;">
-            <canvas id="kehadiranChart"></canvas>
-        </div>
-    </div>
-</div>
+        <!-- GRAFIK RINGKASAN -->
+        <h3 style="margin-top: 30px; font-size: 16px;">Grafik Komponen Ketidakhadiran</h3>
+        <canvas id="kehadiranChart" style="margin-top:10px; margin-bottom:30px;"></canvas>
 
-<!-- FOOTER -->
-<div class="footer">
-    &copy; 2026 veryandika All rights Reserved
+        <!-- FITUR BARU: TABEL DETAIL RINCIAN LOG -->
+        <h3 style="margin-top: 30px; border-top: 1px solid #ccc; padding-top: 15px; font-size: 16px;">Lampiran: Detail Log Ketidakhadiran & Jam Tambahan</h3>
+        <table class="tabel-detail">
+            <thead>
+                <tr>
+                    <th>Tanggal</th>
+                    <th>Jenis Laporan</th>
+                    <th>Jumlah Jam</th>
+                    <th>Keterangan / Jurnal</th>
+                </tr>
+            </thead>
+            <tbody id="tabelDetailRekap">
+                <tr><td colspan="4" style="text-align:center;">Menunggu Generate...</td></tr>
+            </tbody>
+        </table>
+
+    </div>
 </div>
 
 <script>
@@ -417,114 +168,37 @@
     let namaUserAktif = "";
     let chartInstance = null;
 
-    // FUNGSI TOGGLE PASSWORD
-    function togglePassword() {
-        const passwordInput = document.getElementById('password');
-        const eyeIcon = document.getElementById('eyeIcon');
-        const eyeOffIcon = document.getElementById('eyeOffIcon');
-        
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            eyeIcon.style.display = 'none';
-            eyeOffIcon.style.display = 'block';
-        } else {
-            passwordInput.type = 'password';
-            eyeIcon.style.display = 'block';
-            eyeOffIcon.style.display = 'none';
-        }
-    }
-
-    // FUNGSI LOGOUT
-    function logout() {
-        if(confirm("Apakah Anda yakin ingin keluar?")) {
-            namaUserAktif = ""; // Kosongkan sesi nama
-            
-            // Sembunyikan antarmuka utama
-            document.getElementById("userBar").style.display = "none";
-            document.getElementById("tabMenu").style.display = "none";
-            document.getElementById("formSection").style.display = "none";
-            document.getElementById("historySection").style.display = "none";
-            document.getElementById("rekapSection").style.display = "none";
-            
-            // Reset formulir login & form kehadiran
-            document.getElementById("formLogin").reset();
-            document.getElementById("formKehadiran").reset();
-            
-            // Kembalikan ikon mata password ke default jika sedang aktif
-            document.getElementById('password').type = 'password';
-            document.getElementById('eyeIcon').style.display = 'block';
-            document.getElementById('eyeOffIcon').style.display = 'none';
-
-            // Tampilkan kembali halaman login dengan animasi
-            document.getElementById("loginSection").style.display = "block";
-            document.getElementById("loginSection").style.animation = 'none';
-            void document.getElementById("loginSection").offsetWidth; // Trigger reflow
-            document.getElementById("loginSection").style.animation = 'slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards';
-        }
-    }
-
-    // LABEL DINAMIS
     document.getElementById("jenis").addEventListener("change", function() {
         const jenis = this.value;
         const labelJam = document.getElementById("labelJam");
-        if (jenis === "Jam Tambahan") { labelJam.innerText = "Jumlah Jam Tambahan:"; labelJam.style.color = "var(--ios-blue)"; }
-        else if (jenis !== "") { labelJam.innerText = "Jumlah Jam yang Ditinggalkan (Jam Kosong):"; labelJam.style.color = "var(--ios-red)"; }
-        else { labelJam.innerText = "Jumlah Jam:"; labelJam.style.color = "#444"; }
+        if (jenis === "Jam Tambahan") { labelJam.innerText = "Jumlah Jam Tambahan:"; labelJam.style.color = "#007bff"; }
+        else if (jenis !== "") { labelJam.innerText = "Jumlah Jam yang Ditinggalkan (Jam Kosong):"; labelJam.style.color = "#dc3545"; }
+        else { labelJam.innerText = "Jumlah Jam:"; labelJam.style.color = "#555"; }
     });
 
-    // SISTEM PINDAH TAB
     function bukaTab(tab) {
-        document.getElementById('formSection').style.animation = 'none';
-        document.getElementById('historySection').style.animation = 'none';
-        document.getElementById('rekapSection').style.animation = 'none';
-        
         document.getElementById('formSection').style.display = 'none';
         document.getElementById('historySection').style.display = 'none';
         document.getElementById('rekapSection').style.display = 'none';
-        
         document.getElementById('btnTabForm').className = '';
         document.getElementById('btnTabHistory').className = '';
         document.getElementById('btnTabRekap').className = '';
 
-        void document.getElementById('formSection').offsetWidth;
-
-        if (tab === 'form') { 
-            document.getElementById('formSection').style.display = 'block'; 
-            document.getElementById('formSection').style.animation = 'slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards';
-            document.getElementById('btnTabForm').className = 'active'; 
-        }
-        else if (tab === 'history') { 
-            document.getElementById('historySection').style.display = 'block'; 
-            document.getElementById('historySection').style.animation = 'slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards';
-            document.getElementById('btnTabHistory').className = 'active'; 
-            loadHistory(); 
-        }
-        else if (tab === 'rekap') { 
-            document.getElementById('rekapSection').style.display = 'block'; 
-            document.getElementById('rekapSection').style.animation = 'slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards';
-            document.getElementById('btnTabRekap').className = 'active'; 
-        }
+        if (tab === 'form') { document.getElementById('formSection').style.display = 'block'; document.getElementById('btnTabForm').className = 'active'; }
+        else if (tab === 'history') { document.getElementById('historySection').style.display = 'block'; document.getElementById('btnTabHistory').className = 'active'; loadHistory(); }
+        else if (tab === 'rekap') { document.getElementById('rekapSection').style.display = 'block'; document.getElementById('btnTabRekap').className = 'active'; }
     }
 
-    // LOGIN
     document.getElementById("formLogin").addEventListener("submit", function(e) {
         e.preventDefault();
         document.getElementById("loginLoading").style.display = "block";
-        fetch(GAS_URL, {
-            method: 'POST',
-            body: JSON.stringify({ action: "login", username: document.getElementById("username").value, password: document.getElementById("password").value })
-        }).then(res => res.json()).then(data => {
+        fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: "login", username: document.getElementById("username").value, password: document.getElementById("password").value }) })
+        .then(res => res.json()).then(data => {
             document.getElementById("loginLoading").style.display = "none";
             if (data.status === "success") {
                 namaUserAktif = data.nama;
-                
-                // Transisi tampilan dari Login ke Dashboard
                 document.getElementById("loginSection").style.display = "none";
-                
-                document.getElementById("userBar").style.display = "flex";
-                document.getElementById("namaUserBar").innerText = namaUserAktif;
                 document.getElementById("tabMenu").style.display = "flex";
-                
                 bukaTab('form');
                 document.getElementById("namaGuru").value = namaUserAktif;
                 document.getElementById("namaRekap").innerText = namaUserAktif;
@@ -532,7 +206,6 @@
         }).catch(() => alert("Terjadi kesalahan jaringan."));
     });
 
-    // KIRIM JURNAL
     document.getElementById("formKehadiran").addEventListener("submit", function(e) {
         e.preventDefault();
         const payload = { action: "submit_log", nama: namaUserAktif, tanggal: document.getElementById("tanggal").value, jenis: document.getElementById("jenis").value, jam: document.getElementById("jam").value, kelas: document.getElementById("kelas").value, keterangan: document.getElementById("keterangan").value };
@@ -541,55 +214,35 @@
         });
     });
 
-    // AMBIL & TAMPILKAN RIWAYAT
     function loadHistory() {
         const tbody = document.getElementById("tabelRiwayat");
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: #8e8e93;">Memuat riwayat...</td></tr>';
-        
-        fetch(GAS_URL, {
-            method: 'POST',
-            body: JSON.stringify({ action: "get_history", nama: namaUserAktif })
-        }).then(res => res.json()).then(result => {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Memuat riwayat...</td></tr>';
+        fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: "get_history", nama: namaUserAktif }) })
+        .then(res => res.json()).then(result => {
             if (result.status === "success") {
                 tbody.innerHTML = '';
-                if (result.data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: #8e8e93;">Belum ada riwayat jurnal.</td></tr>';
-                } else {
+                if (result.data.length === 0) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Belum ada riwayat jurnal.</td></tr>';
+                else {
                     result.data.forEach(item => {
                         let tgl = new Date(item.tanggal).toLocaleDateString('id-ID');
-                        let tr = document.createElement("tr");
-                        tr.innerHTML = `
-                            <td>${tgl}</td>
-                            <td><span style="background: rgba(0,0,0,0.05); padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;">${item.jenis}</span></td>
-                            <td style="font-weight: 500;">${item.jam} Jam</td>
-                            <td>${item.keterangan}</td>
-                            <td><button class="btn-hapus" onclick="hapusJurnal('${item.timestamp}')">🗑️ Hapus</button></td>
-                        `;
-                        tbody.appendChild(tr);
+                        tbody.innerHTML += `<tr><td>${tgl}</td><td>${item.jenis}</td><td>${item.jam} Jam</td><td>${item.keterangan}</td><td><button class="btn-hapus" onclick="hapusJurnal('${item.timestamp}')">🗑️ Hapus</button></td></tr>`;
                     });
                 }
             }
         });
     }
 
-    // PROSES HAPUS JURNAL
     function hapusJurnal(timestamp) {
-        if(confirm("Apakah Anda yakin ingin membatalkan/menghapus jurnal ini? Data yang terhapus tidak dapat dikembalikan.")) {
-            fetch(GAS_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: "delete_log", nama: namaUserAktif, timestamp: timestamp })
-            }).then(res => res.json()).then(result => {
-                if(result.status === "success") {
-                    alert(result.message);
-                    loadHistory(); 
-                } else {
-                    alert(result.message);
-                }
+        if(confirm("Yakin ingin menghapus jurnal ini?")) {
+            fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: "delete_log", nama: namaUserAktif, timestamp: timestamp }) })
+            .then(res => res.json()).then(result => {
+                alert(result.message);
+                if(result.status === "success") loadHistory();
             });
         }
     }
 
-    // GENERATE REKAP
+    // --- FITUR BARU: GENERATE REKAP (TERMASUK TABEL LAMPIRAN) ---
     function generateRekap() {
         const beban = parseFloat(document.getElementById("inputBebanKerja").value);
         const tglAwal = document.getElementById("tglAwal").value;
@@ -597,6 +250,7 @@
         if(!beban || !tglAwal || !tglAkhir) { alert("Lengkapi filter!"); return; }
 
         document.getElementById("laporanCetak").style.display = "block";
+        // Format teks periode agar rapi (cth: 2026-08-01 s/d 2026-08-31)
         document.getElementById("periodeRekap").innerText = tglAwal + " s/d " + tglAkhir;
 
         fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: "get_rekap", nama: namaUserAktif, tglAwal: tglAwal, tglAkhir: tglAkhir }) })
@@ -615,17 +269,44 @@
                 document.getElementById("jamAktifTxt").innerText = hasilTotal + " Jam";
 
                 let pred = ""; let warna = ""; let ket = "";
-                if (persen >= 90) { pred = "PREDIKAT A"; warna = "var(--ios-green)"; ket = "Aktif"; }
-                else if (persen >= 80) { pred = "PREDIKAT B"; warna = "#5ac8fa"; ket = "Teguran"; }
-                else if (persen >= 70) { pred = "PREDIKAT C"; warna = "#5856d6"; ket = "Peringatan"; }
-                else if (persen >= 60) { pred = "PREDIKAT D"; warna = "#ff9500"; ket = "Tindakan"; }
-                else { pred = "PREDIKAT E"; warna = "var(--ios-red)"; ket = "Mutasi"; }
+                if (persen >= 90) { pred = "PREDIKAT A"; warna = "#28a745"; ket = "Aktif"; }
+                else if (persen >= 80) { pred = "PREDIKAT B"; warna = "#5cb85c"; ket = "Teguran"; }
+                else if (persen >= 70) { pred = "PREDIKAT C"; warna = "#6f42c1"; ket = "Peringatan"; }
+                else if (persen >= 60) { pred = "PREDIKAT D"; warna = "#dc3545"; ket = "Tindakan"; }
+                else { pred = "PREDIKAT E"; warna = "#c82333"; ket = "Mutasi"; }
 
                 const pBox = document.getElementById('predikatBox');
                 pBox.innerText = pred + " (" + ket + ") - Keaktifan Akhir: " + persen + "%";
                 pBox.style.backgroundColor = warna;
 
                 renderChart(data);
+
+                // MENGISI TABEL DETAIL (LAMPIRAN BAWAH)
+                const tbodyDetail = document.getElementById("tabelDetailRekap");
+                tbodyDetail.innerHTML = "";
+                const rincian = res.rincian_log;
+
+                if (rincian.length === 0) {
+                    tbodyDetail.innerHTML = '<tr><td colspan="4" style="text-align:center;">Tidak ada catatan ketidakhadiran atau tambahan pada periode ini.</td></tr>';
+                } else {
+                    // Mengurutkan data berdasarkan tanggal (dari yang terlama ke terbaru)
+                    rincian.sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
+                    
+                    rincian.forEach(item => {
+                        let tglFormat = new Date(item.tanggal).toLocaleDateString('id-ID');
+                        let warnaJam = (item.jenis === "Jam Tambahan") ? "color: #007bff;" : "color: #dc3545;";
+                        let tandaJam = (item.jenis === "Jam Tambahan") ? "+ " : "- ";
+
+                        tbodyDetail.innerHTML += `
+                            <tr>
+                                <td>${tglFormat}</td>
+                                <td>${item.jenis}</td>
+                                <td style="font-weight:bold; ${warnaJam}">${tandaJam}${item.jam} Jam</td>
+                                <td>${item.keterangan}</td>
+                            </tr>
+                        `;
+                    });
+                }
             }
         });
     }
@@ -633,47 +314,11 @@
     function renderChart(data) {
         const ctx = document.getElementById('kehadiranChart').getContext('2d');
         if (chartInstance) chartInstance.destroy();
-        
-        chartInstance = new Chart(ctx, { 
-            type: 'bar', 
-            data: { 
-                labels: ['Alfa', 'Sakit', 'Pribadi', 'Dinas', 'Tambahan'], 
-                datasets: [{ 
-                    label: 'Jumlah Jam', 
-                    data: [data.Alfa, data.Sakit, data.Pribadi, data.Dinas, data.Tambahan], 
-                    backgroundColor: ['#ff3b30', '#34c759', '#af52de', '#ff9500', '#007aff'],
-                    borderRadius: 8,
-                    borderSkipped: false
-                }] 
-            }, 
-            options: { 
-                responsive: true,
-                plugins: {
-                    legend: { display: false }
-                },
-                scales: { 
-                    y: { 
-                        beginAtZero: true, 
-                        grid: { color: 'rgba(0,0,0,0.05)' },
-                        border: { display: false }
-                    },
-                    x: {
-                        grid: { display: false },
-                        border: { display: false }
-                    }
-                } 
-            } 
-        });
+        chartInstance = new Chart(ctx, { type: 'bar', data: { labels: ['Alfa', 'Sakit', 'Pribadi', 'Dinas', 'Tambahan'], datasets: [{ label: 'Jumlah Jam', data: [data.Alfa, data.Sakit, data.Pribadi, data.Dinas, data.Tambahan], backgroundColor: ['#d9534f', '#5cb85c', '#6f42c1', '#f0ad4e', '#007bff'] }] }, options: { responsive: true, scales: { y: { beginAtZero: true } } } });
     }
 
     function downloadPDF() {
-        html2pdf().set({ 
-            margin: 0.5, 
-            filename: 'Laporan_' + namaUserAktif + '.pdf', 
-            image: { type: 'jpeg', quality: 0.98 }, 
-            html2canvas: { scale: 2, windowWidth: 800 }, 
-            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } 
-        }).from(document.getElementById('laporanCetak')).save();
+        html2pdf().set({ margin: 0.5, filename: 'Laporan_Evaluasi_' + namaUserAktif + '.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } }).from(document.getElementById('laporanCetak')).save();
     }
 </script>
 </body>
